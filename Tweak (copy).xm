@@ -62,31 +62,56 @@ NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 @interface _UIStatusBarTimeItem : UIView
 @property (copy) _UIStatusBarStringView *shortTimeView;
 @property (copy) _UIStatusBarStringView *pillTimeView;
-@property (nonatomic, retain) PCSimpleTimer *udtTimer;
+@property (nonatomic, retain) NSTimer *nz9_seconds_timer;
+@end
+
+//Pray to god this works
+
+@interface SBClockDataProvider : NSObject
++ (id)sharedInstance;
 @end
 
 @interface PCSimpleTimer : NSObject
 @property BOOL disableSystemWaking;
 - (BOOL)disableSystemWaking;
-- (id)initWithFireDate:(id)arg1 serviceIdentifier:(id)arg2 target:(id)arg3 selector:(SEL)arg4;
-- (id)initWithTimeInterval:(double)arg1 serviceIdentifier:(id)arg2 target:(id)arg3 selector:(SEL)arg4;
+- (id)initWithFireDate:(id)arg1 serviceIdentifier:(id)arg2 target:(id)arg3 selector:(SEL)arg4 userInfo:(id)arg5;
+- (id)initWithTimeInterval:(double)arg1 serviceIdentifier:(id)arg2 target:(id)arg3 selector:(SEL)arg4 userInfo:(id)arg5;
 - (void)invalidate;
 - (BOOL)isValid;
 - (void)scheduleInRunLoop:(id)arg1;
 - (void)setDisableSystemWaking:(BOOL)arg1;
+- (id)userInfo;
 @end
-	
-@interface SBClockDataProvider : NSObject
-+ (id)sharedInstance;
-@end
-	
+
+NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
+
+static PCSimpleTimer *udtTimer = [[%c(PCSimpleTimer) alloc] initWithFireDate:[NSDate dateWithTimeIntervalSinceNow:1] serviceIdentifier:@"com.mpg13.UnderTime" target:[%c(SBClockDataProvider) sharedInstance] selector:@selector(udtTimerFired) userInfo:data];
+
 %hook _UIStatusBarTimeItem
-%property (nonatomic, retain) PCSimpleTimer *udtTimer;
+%new
+-(void)udtTimerFired{
+	NSLog(@"Timer Fired");
+	self.shortTimeView.text = @":";
+			self.pillTimeView.text = @":";
+			[self.shortTimeView setFont: [self.shortTimeView.font fontWithSize:sizeOfFont]];
+			[self.pillTimeView setFont: [self.pillTimeView.font fontWithSize:sizeOfFont]];
+}
+
+- (id)applyUpdate:(id)arg1 toDisplayItem:(id)arg2 {
+	id returnThis = %orig;
+	[self.shortTimeView setFont: [self.shortTimeView.font fontWithSize:sizeOfFont]];
+	[self.pillTimeView setFont: [self.pillTimeView.font fontWithSize:sizeOfFont]];
+	return returnThis;}
+
+%end
+
+/*
+%property (nonatomic, retain) NSTimer *nz9_seconds_timer;
 
 - (instancetype)init {
 	%orig;
 	if(GetPrefBool(@"Enable") && ((!GetPrefBool(@"lineTwoStandard") && [lineTwo containsString:@"s"]) || (!GetPrefBool(@"lineOneStandard") && [lineOne containsString:@"s"]))) {
-		self.udtTimer = [[[%c(PCSimpleTimer) alloc] initWithFireDate:[NSDate dateWithTimeIntervalSinceNow:1] serviceIdentifier:@"com.mpg13.UnderTime" target:[%c(SBClockDataProvider) sharedInstance] selector:@selector(udtTimerFired)](NSTimer udtTimer) {
+			self.nz9_seconds_timer = [NSTimer scheduledTimerWithTimeInterval:1.0 repeats:YES block:^(NSTimer *timer) {
 			self.shortTimeView.text = @":";
 			self.pillTimeView.text = @":";
 			[self.shortTimeView setFont: [self.shortTimeView.font fontWithSize:sizeOfFont]];
@@ -104,7 +129,7 @@ NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 }
 
 %end
-
+*/
 
 @interface _UIStatusBarBackgroundActivityView : UIView
 @property (copy) CALayer *pulseLayer;
