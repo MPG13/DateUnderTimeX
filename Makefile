@@ -5,6 +5,7 @@ include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = UnderTime
 UnderTime_FILES = Tweak.xm
+UnderTime_FRAMEWORKS = UIKit
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 

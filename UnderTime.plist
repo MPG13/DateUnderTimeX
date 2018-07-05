@@ -1,5 +1,6 @@
 {
-    Filter = {
-        Classes  = ( "_UIStatusBarStringView", "_UIStatusBarTimeItem", "_UIStatusBarNavigationItem" );
-    };
+	Filter = {
+		Classes  = ( "_UIStatusBarStringView", "_UIStatusBarTimeItem", "_UIStatusBarNavigationItem" );
+		Bundles = ( "com.apple.UIKit" );
+	};
 }

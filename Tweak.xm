@@ -9,17 +9,20 @@
 @end
 
 int sizeOfFont = GetPrefInt(@"sizeOfFont");
-	
+
+NSString *lineTwo = GetPrefString(@"lineTwo");
+NSString *lineOne = GetPrefString(@"lineOne");
+NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+
 %hook _UIStatusBarStringView
 
 - (void)setText:(NSString *)text {
-	if(GetPrefBool(@"Enable") && ![text containsString:@"%"] && ![text containsString:@"1x"] && ![text containsString:@"LTE"] && ![text containsString:@"4G"] && ![text containsString:@"3G"] && ![text containsString:@"2G"]) {
-		NSString *lineTwo = GetPrefString(@"lineTwo");
-		NSString *lineOne = GetPrefString(@"lineOne");
+	if(GetPrefBool(@"Enable") && ![text containsString:@"%"] && ![text containsString:@"1x"] && ![text containsString:@"LTE"] && ![text containsString:@"4G"] && ![text containsString:@"3G"] && ![text containsString:@"2G"] && ![text containsString:@"EDGE"]) {
+
 		NSString *timeLineTwo = lineTwo;
 		NSString *timeLineOne = lineOne;
 		
-		NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+		
 		NSDate *now = [NSDate date];
 		if(!GetPrefBool(@"lineTwoStandard")){
 		[dateFormatter setDateFormat:lineTwo];
@@ -56,22 +59,37 @@ int sizeOfFont = GetPrefInt(@"sizeOfFont");
 
 %end
 
-@interface _UIStatusBarTimeItem
+@interface _UIStatusBarTimeItem : UIView
 @property (copy) _UIStatusBarStringView *shortTimeView;
 @property (copy) _UIStatusBarStringView *pillTimeView;
+@property (nonatomic, retain) NSTimer *nz9_seconds_timer;
 @end
-
+	
 %hook _UIStatusBarTimeItem
+%property (nonatomic, retain) NSTimer *nz9_seconds_timer;
+
+- (instancetype)init {
+	%orig;
+	if(GetPrefBool(@"Enable") && ((!GetPrefBool(@"lineTwoStandard") && [lineTwo containsString:@"s"]) || (!GetPrefBool(@"lineOneStandard") && [lineOne containsString:@"s"]))) {
+		self.nz9_seconds_timer = [NSTimer scheduledTimerWithTimeInterval:1.0 repeats:YES block:^(NSTimer *timer) {
+			self.shortTimeView.text = @":";
+			self.pillTimeView.text = @":";
+			[self.shortTimeView setFont: [self.shortTimeView.font fontWithSize:sizeOfFont]];
+			[self.pillTimeView setFont: [self.pillTimeView.font fontWithSize:sizeOfFont]];
+	}];
+}
+	return self;
+}
+
 - (id)applyUpdate:(id)arg1 toDisplayItem:(id)arg2 {
 	id returnThis = %orig;
-	if(GetPrefBool(@"Enable")) {
-		[self.shortTimeView setFont: [self.shortTimeView.font fontWithSize:sizeOfFont]];
-		[self.pillTimeView setFont: [self.pillTimeView.font fontWithSize:sizeOfFont]];
-	}
+	[self.shortTimeView setFont: [self.shortTimeView.font fontWithSize:sizeOfFont]];
+	[self.pillTimeView setFont: [self.pillTimeView.font fontWithSize:sizeOfFont]];
 	return returnThis;
 }
 
 %end
+
 
 @interface _UIStatusBarBackgroundActivityView : UIView
 @property (copy) CALayer *pulseLayer;
@@ -88,6 +106,20 @@ int sizeOfFont = GetPrefInt(@"sizeOfFont");
 	}
 }
 
+%end
 
+%hook _UIStatusBarIndicatorLocationItem
+
+- (id)applyUpdate:(id)arg1 toDisplayItem:(id)arg2 {
+	return nil;
+}
 
 %end
+
+%ctor {
+	dateFormatter = [[NSDateFormatter alloc] init];
+	dateFormatter.dateStyle = NSDateFormatterNoStyle;
+	dateFormatter.timeStyle = NSDateFormatterMediumStyle;
+	dateFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US"];
+	%init;
+}
