@@ -1,5 +1,6 @@
 #import "important.h"
 #import <spawn.h>
+#import <PersistentConnection/PCSimpleTimer.h>
 
 @interface _UIStatusBarStringView : UIView
 @property (copy) NSString *text;
@@ -62,16 +63,16 @@ NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 @interface _UIStatusBarTimeItem : UIView
 @property (copy) _UIStatusBarStringView *shortTimeView;
 @property (copy) _UIStatusBarStringView *pillTimeView;
-@property (nonatomic, retain) NSTimer *nz9_seconds_timer;
+@property (nonatomic) PCSimpleTimer *nz9_seconds_timer;
 @end
 	
 %hook _UIStatusBarTimeItem
-%property (nonatomic, retain) NSTimer *nz9_seconds_timer;
+%property (nonatomic, retain) PCSimpleTimer *nz9_seconds_timer;
 
 - (instancetype)init {
 	%orig;
 	if(GetPrefBool(@"Enable") && ((!GetPrefBool(@"lineTwoStandard") && [lineTwo containsString:@"s"]) || (!GetPrefBool(@"lineOneStandard") && [lineOne containsString:@"s"]))) {
-		self.nz9_seconds_timer = [NSTimer scheduledTimerWithTimeInterval:1.0 repeats:YES block:^(NSTimer *timer) {
+		self.nz9_seconds_timer = [PCSimpleTimer initWithTimerInterval:1.0 block:^(PCSimpleTimer *timer) {
 			self.shortTimeView.text = @":";
 			self.pillTimeView.text = @":";
 			[self.shortTimeView setFont: [self.shortTimeView.font fontWithSize:sizeOfFont]];
