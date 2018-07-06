@@ -86,7 +86,7 @@ NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 - (instancetype)init {
 	%orig;
 	if(GetPrefBool(@"Enable") && ((!GetPrefBool(@"lineTwoStandard") && [lineTwo containsString:@"s"]) || (!GetPrefBool(@"lineOneStandard") && [lineOne containsString:@"s"]))) {
-		self.udtTimer = [[[%c(PCSimpleTimer) alloc] initWithFireDate:[NSDate dateWithTimeIntervalSinceNow:1] serviceIdentifier:@"com.mpg13.UnderTime" target:[%c(SBClockDataProvider) sharedInstance] selector:@selector(udtTimerFired)](NSTimer udtTimer) {
+		self.udtTimer = [[[%c(PCSimpleTimer) alloc] initWithFireDate:[NSDate dateWithTimeIntervalSinceNow:1] serviceIdentifier:@"com.mpg13.UnderTime" target:[%c(SBClockDataProvider) sharedInstance] selector:@selector(udtTimerFired)](PCSimpleTimer udtTimer) {
 			self.shortTimeView.text = @":";
 			self.pillTimeView.text = @":";
 			[self.shortTimeView setFont: [self.shortTimeView.font fontWithSize:sizeOfFont]];
