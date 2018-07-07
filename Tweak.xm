@@ -6,7 +6,34 @@
 @property NSInteger numberOfLines;
 @property (copy) UIFont *font;
 @property NSInteger textAlignment;
++ (id)sharedInstance;
 @end
+
+
+@interface PCSimpleTimer : NSObject
+@property BOOL disableSystemWaking;
+- (BOOL)disableSystemWaking;
+- (id)initWithFireDate:(id)arg1 serviceIdentifier:(id)arg2 target:(id)arg3 selector:(SEL)arg4 userInfo:(id)arg5;
+- (id)initWithTimeInterval:(double)arg1 serviceIdentifier:(id)arg2 target:(id)arg3 selector:(SEL)arg4 userInfo:(id)arg5;
+- (void)invalidate;
+- (BOOL)isValid;
+- (void)scheduleInRunLoop:(id)arg1;
+- (void)setDisableSystemWaking:(BOOL)arg1;
+- (id)userInfo;
+@end
+
+@interface _UIStatusBarBackgroundActivityView : UIView
+@property (copy) CALayer *pulseLayer;
+@end
+
+#define udtTimerPlist @"/private/var/mobile/Library/Preferences/com.mpg13.udtTimer.plist"
+static PCSimpleTimer *udtTimer = nil;
+
+static void udtTimerLoad();
+
+
+
+
 
 int sizeOfFont = GetPrefInt(@"sizeOfFont");
 
@@ -14,9 +41,28 @@ NSString *lineTwo = GetPrefString(@"lineTwo");
 NSString *lineOne = GetPrefString(@"lineOne");
 NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 
+
+
+@interface _UIStatusBarTimeItem
+@property (copy) _UIStatusBarStringView *shortTimeView;
+@property (copy) _UIStatusBarStringView *pillTimeView;
+@end
+
+
+%group SPRINGBOARD
+%hook SpringBoard
+-(void)applicationDidFinishLaunching:(id)application
+{
+	%orig;
+
+	NSLog(@"[udtTimer] SpringBoard applicationDidFinishLaunching");
+	udtTimerLoad();
+}
+%end
+
 %hook _UIStatusBarStringView
 
-- (void)setText:(NSString *)text {
+- (void)udtTimerFired:(NSString *)text {
 	if(GetPrefBool(@"Enable") && ![text containsString:@"%"] && ![text containsString:@"1x"] && ![text containsString:@"LTE"] && ![text containsString:@"4G"] && ![text containsString:@"3G"] && ![text containsString:@"2G"] && ![text containsString:@"EDGE"]) {
 
 		NSString *timeLineTwo = lineTwo;
@@ -58,57 +104,50 @@ NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 }
 
 %end
+%end
+%group STATUSTIME
 
-@interface _UIStatusBarTimeItem : UIView
-@property (copy) _UIStatusBarStringView *shortTimeView;
-@property (copy) _UIStatusBarStringView *pillTimeView;
-@property (nonatomic, retain) PCSimpleTimer *udtTimer;
-@end
-
-@interface PCSimpleTimer : NSObject
-@property BOOL disableSystemWaking;
-- (BOOL)disableSystemWaking;
-- (id)initWithFireDate:(id)arg1 serviceIdentifier:(id)arg2 target:(id)arg3 selector:(SEL)arg4;
-- (id)initWithTimeInterval:(double)arg1 serviceIdentifier:(id)arg2 target:(id)arg3 selector:(SEL)arg4;
-- (void)invalidate;
-- (BOOL)isValid;
-- (void)scheduleInRunLoop:(id)arg1;
-- (void)setDisableSystemWaking:(BOOL)arg1;
-@end
-	
-@interface SBClockDataProvider : NSObject
-+ (id)sharedInstance;
-@end
-	
+/*
 %hook _UIStatusBarTimeItem
-%property (nonatomic, retain) PCSimpleTimer *udtTimer;
+- (void)udtTimerFired{
+	if (udtTimer) {
+		
+		NSLog(@"[udtTimer] udtTimerFired");
+		
+		self.shortTimeView.text = @":";
+		self.pillTimeView.text = @":";
+		[self.shortTimeView setFont: [self.shortTimeView.font fontWithSize:sizeOfFont]];
+		[self.pillTimeView setFont: [self.pillTimeView.font fontWithSize:sizeOfFont]];
+
+		[udtTimer invalidate];
+		udtTimer = nil;
+}}
+%end
+
+
+%hook _UIStatusBarTimeItem
+%property (nonatomic, retain) NSTimer *nz9_seconds_timer;
 
 - (instancetype)init {
 	%orig;
-	if(GetPrefBool(@"Enable") && ((!GetPrefBool(@"lineTwoStandard") && [lineTwo containsString:@"s"]) || (!GetPrefBool(@"lineOneStandard") && [lineOne containsString:@"s"]))) {
-		self.udtTimer = [[[%c(PCSimpleTimer) alloc] initWithFireDate:[NSDate dateWithTimeIntervalSinceNow:1] serviceIdentifier:@"com.mpg13.UnderTime" target:[%c(SBClockDataProvider) sharedInstance] selector:@selector(udtTimerFired)](PCSimpleTimer udtTimer) {
-			self.shortTimeView.text = @":";
-			self.pillTimeView.text = @":";
-			[self.shortTimeView setFont: [self.shortTimeView.font fontWithSize:sizeOfFont]];
-			[self.pillTimeView setFont: [self.pillTimeView.font fontWithSize:sizeOfFont]];
-	}];
-}
+	self.shortTimeView.text = @":";
+	self.pillTimeView.text = @":";
+	self.shortTimeView.font = [UIFont monospacedDigitSystemFontOfSize:12 weight:UIFontWeightBold];
+	self.pillTimeView.font = [UIFont monospacedDigitSystemFontOfSize:12 weight:UIFontWeightBold];
 	return self;
 }
 
 - (id)applyUpdate:(id)arg1 toDisplayItem:(id)arg2 {
 	id returnThis = %orig;
-	[self.shortTimeView setFont: [self.shortTimeView.font fontWithSize:sizeOfFont]];
-	[self.pillTimeView setFont: [self.pillTimeView.font fontWithSize:sizeOfFont]];
+	self.shortTimeView.text = @":";
+	self.pillTimeView.text = @":";
+	self.shortTimeView.font = [UIFont monospacedDigitSystemFontOfSize:12 weight:UIFontWeightBold];
+	self.pillTimeView.font = [UIFont monospacedDigitSystemFontOfSize:12 weight:UIFontWeightBold];
 	return returnThis;
 }
 
-%end
+%end*/
 
-
-@interface _UIStatusBarBackgroundActivityView : UIView
-@property (copy) CALayer *pulseLayer;
-@end
 
 %hook _UIStatusBarBackgroundActivityView
 
@@ -130,11 +169,54 @@ NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 }
 
 %end
+%end
 
+static void udtTimerLoad(){
+	NSDictionary *userInfoDictionary = nil;
+	userInfoDictionary = [[NSMutableDictionary alloc] initWithContentsOfFile:udtTimerPlist];
+	
+	if (!userInfoDictionary) {
+		return;
+	}
+	
+	NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
+	
+	udtTimer = [[%c(PCSimpleTimer) alloc] initWithFireDate:[NSDate dateWithTimeIntervalSinceNow:1] serviceIdentifier:@"com.mpg13.UnderTime" target:[%c(_UIStatusBarStringView) sharedInstance] selector:@selector(udtTimerFired) userInfo:data];
+
+	NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+	[formatter setDateFormat:@"yyyy/MM/dd HH:mm:ss"];
+	[formatter setTimeZone:[NSTimeZone defaultTimeZone]];
+	
+	if ([NSThread isMainThread]) {
+		[udtTimer scheduleInRunLoop:[NSRunLoop mainRunLoop]];
+	} else {
+		dispatch_async(dispatch_get_main_queue(), ^ {
+			[udtTimer scheduleInRunLoop:[NSRunLoop mainRunLoop]];
+		});
+	}
+
+}
+	
+	
+
+
+
+
+/*
 %ctor {
 	dateFormatter = [[NSDateFormatter alloc] init];
 	dateFormatter.dateStyle = NSDateFormatterNoStyle;
 	dateFormatter.timeStyle = NSDateFormatterMediumStyle;
 	dateFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US"];
 	%init;
+}*/
+
+%ctor{
+	@autoreleasepool {
+		if (%c(SpringBoard)) {
+			%init(SPRINGBOARD);
+		} else {
+			%init(STATUSTIME);
+		}
+	}
 }
