@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>items</key>
+	<array>
+		<dict>
+			<key>cell</key>
+			<string>PSStaticTextCell</string>
+			<key>height</key>
+			<string>45</string>
+			<key>label</key>
+			<string>UnderTime</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.mpg13.undertime</string>
+			<key>key</key>
+			<string>Enable</string>
+			<key>label</key>
+			<string>Enable tweak</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.mpg13.undertime</string>
+			<key>key</key>
+			<string>hideLocInd</string>
+			<key>label</key>
+			<string>Hide Location Indicator</string>
+		</dict>
+
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>First Line</string>
+			<key>height</key>
+			<string>10</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>com.mpg13.undertime</string>
+			<key>key</key>
+			<string>lineOneEnable</string>
+			<key>label</key>
+			<string>Custom First Line</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>com.mpg13.undertime</string>
+			<key>key</key>
+			<string>lineOneStandard</string>
+			<key>label</key>
+			<string>First Line Standard String</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>default</key>
+			<string>h:m</string>
+			<key>defaults</key>
+			<string>com.mpg13.undertime</string>
+			<key>key</key>
+			<string>lineOne</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>com.mpg13.undertime</string>
+			<key>key</key>
+			<string>replaceTime</string>
+			<key>label</key>
+			<string>First Line Only</string>
+		</dict>
+		
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Second Line</string>
+			<key>height</key>
+			<string>10</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>com.mpg13.undertime</string>
+			<key>key</key>
+			<string>lineTwoStandard</string>
+			<key>label</key>
+			<string>Second Line Standard String</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>default</key>
+			<string>d/M</string>
+			<key>defaults</key>
+			<string>com.mpg13.undertime</string>
+			<key>key</key>
+			<string>lineTwo</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Use nsdateformatter.com to help you format your date!</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Seconds will not update on the lockscreen!</string>
+		</dict>
+		
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Font Size</string>
+			<key>height</key>
+			<string>10</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSliderCell</string>
+			<key>default</key>
+			<integer>12</integer>
+			<key>defaults</key>
+			<string>com.mpg13.undertime</string>
+			<key>key</key>
+			<string>sizeOfFont</string>
+			<key>max</key>
+			<real>18</real>
+			<key>min</key>
+			<real>6</real>
+			<key>showValue</key>
+			<true/>
+		</dict>
+		
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string> </string>
+			<key>height</key>
+			<string>10</string>
+		</dict>
+		<dict>
+			<key>action</key>
+			<string>respring</string>
+			<key>height</key>
+			<string>30</string>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>Respring</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Developed partially by MPG13 | Forked from NeinZedd's "DateUnderTimeX" and "SecondsInTimeX". Thanks NZ9!</string>
+		</dict>
+	</array>
+	<key>title</key>
+	<string>UnderTime</string>
+</dict>
+</plist>

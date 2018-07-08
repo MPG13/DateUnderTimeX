@@ -1,0 +1,12 @@
+Package: com.mpg13.undertime
+Name: UnderTime
+Depends: mobilesubstrate
+Architecture: iphoneos-arm
+Description: Customizable date under time in iX StatusBar.
+Homepage: https://mpg13.github.io
+Depiction: https://mpg13.github.io/repo/depicts/undertime.html
+Maintainer: MPG13 <micahplacido@gmail.com>
+Author: MPG13 <micahplacido@gmail.com>
+Section: Tweaks
+Version: 1.4.1-31+debug
+Installed-Size: 196
