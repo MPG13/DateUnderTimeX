@@ -187,15 +187,8 @@ static void udtTimerLoad(){
 	[formatter setDateFormat:@"yyyy/MM/dd HH:mm:ss"];
 	[formatter setTimeZone:[NSTimeZone defaultTimeZone]];
 	
-	if ([NSThread isMainThread]) {
-		[udtTimer scheduleInRunLoop:[NSRunLoop mainRunLoop]];
-	} else {
-		dispatch_async(dispatch_get_main_queue(), ^ {
-			[udtTimer scheduleInRunLoop:[NSRunLoop mainRunLoop]];
-		});
+	[udtTimer scheduleInRunLoop:[NSRunLoop mainRunLoop]];
 	}
-
-}
 	
 	
 
