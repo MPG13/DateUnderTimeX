@@ -1,94 +1,96 @@
 #import "important.h"
 #import <spawn.h>
 
+@interface UIColor (fromHex)
++ (UIColor *)colorwithHexString:(NSString *)hexStr alpha:(CGFloat)alpha;
+@end
+
 @interface _UIStatusBarStringView : UIView
 @property (copy) NSString *text;
 @property NSInteger numberOfLines;
 @property (copy) UIFont *font;
+@property (copy) UIColor *color;
 @property NSInteger textAlignment;
-+ (id)sharedInstance;
-@end
-
-
-@interface PCSimpleTimer : NSObject
-@property BOOL disableSystemWaking;
-- (BOOL)disableSystemWaking;
-- (id)initWithFireDate:(id)arg1 serviceIdentifier:(id)arg2 target:(id)arg3 selector:(SEL)arg4 userInfo:(id)arg5;
-- (id)initWithTimeInterval:(double)arg1 serviceIdentifier:(id)arg2 target:(id)arg3 selector:(SEL)arg4 userInfo:(id)arg5;
-- (void)invalidate;
-- (BOOL)isValid;
-- (void)scheduleInRunLoop:(id)arg1;
-- (void)setDisableSystemWaking:(BOOL)arg1;
-- (id)userInfo;
 @end
 
 @interface _UIStatusBarBackgroundActivityView : UIView
 @property (copy) CALayer *pulseLayer;
 @end
 
-#define udtTimerPlist @"/private/var/mobile/Library/Preferences/com.mpg13.udtTimer.plist"
-static PCSimpleTimer *udtTimer = nil;
-
-static void udtTimerLoad();
-
-
-
-
-
-int sizeOfFont = GetPrefInt(@"sizeOfFont");
-
-NSString *lineTwo = GetPrefString(@"lineTwo");
-NSString *lineOne = GetPrefString(@"lineOne");
-NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-
-
-
-@interface _UIStatusBarTimeItem
+@interface _UIStatusBarTimeItem : UIView
 @property (copy) _UIStatusBarStringView *shortTimeView;
 @property (copy) _UIStatusBarStringView *pillTimeView;
+@property (nonatomic, retain) NSTimer *nz9_seconds_timer;
 @end
 
-
-%group SPRINGBOARD
-%hook SpringBoard
--(void)applicationDidFinishLaunching:(id)application
+@implementation UIColor (fromHex)
+ 
++ (UIColor *)colorwithHexString:(NSString *)hexStr alpha:(CGFloat)alpha;
 {
-	%orig;
-
-	NSLog(@"[udtTimer] SpringBoard applicationDidFinishLaunching");
-	udtTimerLoad();
+	//-----------------------------------------
+	// Convert hex string to an integer
+	//-----------------------------------------
+	unsigned int hexint = 0;
+ 
+	// Create scanner
+	NSScanner *scanner = [NSScanner scannerWithString:hexStr];
+ 
+	// Tell scanner to skip the # character
+	[scanner setCharactersToBeSkipped:[NSCharacterSet 
+		characterSetWithCharactersInString:@"#"]];
+	[scanner scanHexInt:&hexint];
+ 
+	//-----------------------------------------
+	// Create color object, specifying alpha
+	//-----------------------------------------
+	UIColor *color =
+		[UIColor colorWithRed:((CGFloat) ((hexint & 0xFF0000) >> 16))/255
+		green:((CGFloat) ((hexint & 0xFF00) >> 8))/255
+		blue:((CGFloat) (hexint & 0xFF))/255
+		alpha:alpha];
+ 
+	return color;
 }
-%end
+ 
+@end
+
+int sizeOfFont = GetPrefInt(@"sizeOfFont");
+int fontAlpha = GetPrefInt(@"fontAlpha");
+NSString *lineOne = GetPrefString(@"lineOne");
+NSString *lineTwo = GetPrefString(@"lineTwo");
+NSString *fontColor = GetPrefString(@"fontHex");
+
+NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 
 %hook _UIStatusBarStringView
 
-- (void)udtTimerFired:(NSString *)text {
+- (void)setText:(NSString *)text {
 	if(GetPrefBool(@"Enable") && ![text containsString:@"%"] && ![text containsString:@"1x"] && ![text containsString:@"LTE"] && ![text containsString:@"4G"] && ![text containsString:@"3G"] && ![text containsString:@"2G"] && ![text containsString:@"EDGE"]) {
-
-		NSString *timeLineTwo = lineTwo;
 		NSString *timeLineOne = lineOne;
-		
-		
+		NSString *timeLineTwo = lineTwo;
+	
 		NSDate *now = [NSDate date];
 		if(!GetPrefBool(@"lineTwoStandard")){
-		[dateFormatter setDateFormat:lineTwo];
-		timeLineTwo = [dateFormatter stringFromDate:now];
-		timeLineTwo = [timeLineTwo substringToIndex:[timeLineTwo length]];
+			[dateFormatter setDateFormat:lineTwo];
+			timeLineTwo = [dateFormatter stringFromDate:now];
+			timeLineTwo = [timeLineTwo substringToIndex:[timeLineTwo length]];
 		}
 		if(!GetPrefBool(@"lineOneStandard")){
-		[dateFormatter setDateFormat:lineOne];
-		timeLineOne = [dateFormatter stringFromDate:now];
-		timeLineOne = [timeLineOne substringToIndex:[timeLineOne length]];
+			[dateFormatter setDateFormat:lineOne];
+			timeLineOne = [dateFormatter stringFromDate:now];
+			timeLineOne = [timeLineOne substringToIndex:[timeLineOne length]];
 		}
 		NSString *newString;
 		if(GetPrefBool(@"lineOneEnable")){
-		newString = [NSString stringWithFormat:@"%@\n%@", timeLineOne, timeLineTwo];
+			newString = [NSString stringWithFormat:@"%@\n%@", timeLineOne, timeLineTwo];
 		}
 		else{
-		newString = [NSString stringWithFormat:@"%@\n%@", text, timeLineTwo];
+			newString = [NSString stringWithFormat:@"%@\n%@", text, timeLineTwo];
 		}
-
 		[self setFont: [self.font fontWithSize:sizeOfFont]];
+		if((fontColor) && (fontAlpha) && (GetPrefBool(@"customColor"))){
+			[self setColor:[UIColor colorwithHexString:fontColor alpha:fontAlpha]];
+		}
 		if(GetPrefBool(@"replaceTime")){
 			%orig(timeLineOne);
 		}
@@ -102,51 +104,35 @@ NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 		%orig(text);
 	}
 }
-
 %end
-%end
-%group STATUSTIME
-
-/*
-%hook _UIStatusBarTimeItem
-- (void)udtTimerFired{
-	if (udtTimer) {
-		
-		NSLog(@"[udtTimer] udtTimerFired");
-		
-		self.shortTimeView.text = @":";
-		self.pillTimeView.text = @":";
-		[self.shortTimeView setFont: [self.shortTimeView.font fontWithSize:sizeOfFont]];
-		[self.pillTimeView setFont: [self.pillTimeView.font fontWithSize:sizeOfFont]];
-
-		[udtTimer invalidate];
-		udtTimer = nil;
-}}
-%end
-
 
 %hook _UIStatusBarTimeItem
 %property (nonatomic, retain) NSTimer *nz9_seconds_timer;
 
 - (instancetype)init {
 	%orig;
-	self.shortTimeView.text = @":";
-	self.pillTimeView.text = @":";
-	self.shortTimeView.font = [UIFont monospacedDigitSystemFontOfSize:12 weight:UIFontWeightBold];
-	self.pillTimeView.font = [UIFont monospacedDigitSystemFontOfSize:12 weight:UIFontWeightBold];
+		if(GetPrefBool(@"Enable") && ((!GetPrefBool(@"lineTwoStandard") && [lineTwo containsString:@"s"]) || (!GetPrefBool(@"lineOneStandard") && [lineOne containsString:@"s"]))) {
+			self.nz9_seconds_timer = [NSTimer scheduledTimerWithTimeInterval:1.0 repeats:YES block:^(NSTimer *timer) {
+				self.shortTimeView.text = @":";
+				self.pillTimeView.text = @":";
+				[self.shortTimeView setFont: [self.shortTimeView.font fontWithSize:sizeOfFont]];
+				[self.pillTimeView setFont: [self.pillTimeView.font fontWithSize:sizeOfFont]];
+		}];
+}
 	return self;
 }
 
 - (id)applyUpdate:(id)arg1 toDisplayItem:(id)arg2 {
 	id returnThis = %orig;
-	self.shortTimeView.text = @":";
-	self.pillTimeView.text = @":";
-	self.shortTimeView.font = [UIFont monospacedDigitSystemFontOfSize:12 weight:UIFontWeightBold];
-	self.pillTimeView.font = [UIFont monospacedDigitSystemFontOfSize:12 weight:UIFontWeightBold];
+	[self.shortTimeView setFont: [self.shortTimeView.font fontWithSize:sizeOfFont]];
+	[self.pillTimeView setFont: [self.pillTimeView.font fontWithSize:sizeOfFont]];
 	return returnThis;
+
 }
 
-%end*/
+%end
+
+
 
 
 %hook _UIStatusBarBackgroundActivityView
@@ -158,6 +144,7 @@ NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 			self.pulseLayer.frame = CGRectMake(0, 0, self.frame.size.width, 31);
 			%orig(point);
 	}
+
 }
 
 %end
@@ -169,47 +156,19 @@ NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 }
 
 %end
+
+%hook UIStatusBarBreadcrumbItemView
+
+- (id)applyUpdate:(id)arg1 toDisplayItem:(id)arg2 {
+	return nil;
+}
+
 %end
 
-static void udtTimerLoad(){
-	NSDictionary *userInfoDictionary = nil;
-	userInfoDictionary = [[NSMutableDictionary alloc] initWithContentsOfFile:udtTimerPlist];
-	
-	if (!userInfoDictionary) {
-		return;
-	}
-	
-	NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
-	
-	udtTimer = [[%c(PCSimpleTimer) alloc] initWithFireDate:[NSDate dateWithTimeIntervalSinceNow:1] serviceIdentifier:@"com.mpg13.UnderTime" target:[%c(_UIStatusBarStringView) sharedInstance] selector:@selector(udtTimerFired) userInfo:data];
-
-	NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-	[formatter setDateFormat:@"yyyy/MM/dd HH:mm:ss"];
-	[formatter setTimeZone:[NSTimeZone defaultTimeZone]];
-	
-	[udtTimer scheduleInRunLoop:[NSRunLoop mainRunLoop]];
-	}
-	
-	
-
-
-
-
-/*
 %ctor {
-	dateFormatter = [[NSDateFormatter alloc] init];
-	dateFormatter.dateStyle = NSDateFormatterNoStyle;
-	dateFormatter.timeStyle = NSDateFormatterMediumStyle;
-	dateFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US"];
-	%init;
-}*/
-
-%ctor{
-	@autoreleasepool {
-		if (%c(SpringBoard)) {
-			%init(SPRINGBOARD);
-		} else {
-			%init(STATUSTIME);
-		}
-	}
+		dateFormatter = [[NSDateFormatter alloc] init];
+		dateFormatter.dateStyle = NSDateFormatterNoStyle;
+		dateFormatter.timeStyle = NSDateFormatterMediumStyle;
+		dateFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US"];
+		%init;
 }

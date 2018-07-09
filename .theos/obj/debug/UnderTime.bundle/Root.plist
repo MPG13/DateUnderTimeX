@@ -24,24 +24,12 @@
 			<key>label</key>
 			<string>Enable tweak</string>
 		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSSwitchCell</string>
-			<key>default</key>
-			<true/>
-			<key>defaults</key>
-			<string>com.mpg13.undertime</string>
-			<key>key</key>
-			<string>hideLocInd</string>
-			<key>label</key>
-			<string>Hide Location Indicator</string>
-		</dict>
 
 		<dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>First Line</string>
+			<string>First Line (Keep it shorter than 7 character!)</string>
 			<key>height</key>
 			<string>10</string>
 		</dict>
@@ -49,7 +37,7 @@
 			<key>cell</key>
 			<string>PSSwitchCell</string>
 			<key>default</key>
-			<false/>
+			<true/>
 			<key>defaults</key>
 			<string>com.mpg13.undertime</string>
 			<key>key</key>
@@ -73,11 +61,15 @@
 			<key>cell</key>
 			<string>PSEditTextCell</string>
 			<key>default</key>
-			<string>h:m</string>
+			<string>h:mm:ss</string>
 			<key>defaults</key>
 			<string>com.mpg13.undertime</string>
 			<key>key</key>
 			<string>lineOne</string>
+			<key>label</key>
+			<string>Format:</string>
+			<key>noAutoCorrect</key>
+			<true/>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -96,7 +88,7 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Second Line</string>
+			<string>Second Line (Keep it shorter than 7 characters!)</string>
 			<key>height</key>
 			<string>10</string>
 		</dict>
@@ -116,9 +108,11 @@
 			<key>cell</key>
 			<string>PSEditTextCell</string>
 			<key>default</key>
-			<string>d/M</string>
+			<string>E d/M</string>
 			<key>defaults</key>
 			<string>com.mpg13.undertime</string>
+			<key>label</key>
+			<string>Format:</string>
 			<key>key</key>
 			<string>lineTwo</string>
 		</dict>
@@ -160,6 +154,56 @@
 			<true/>
 		</dict>
 		
+		
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Font Alpha</string>
+			<key>height</key>
+			<string>10</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSliderCell</string>
+			<key>default</key>
+			<integer>1</integer>
+			<key>defaults</key>
+			<string>com.mpg13.undertime</string>
+			<key>key</key>
+			<string>fontAlpha</string>
+			<key>max</key>
+			<real>1</real>
+			<key>min</key>
+			<real>0</real>
+			<key>showValue</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>default</key>
+			<string>111111</string>
+			<key>defaults</key>
+			<string>com.mpg13.undertime</string>
+			<key>key</key>
+			<string>fontHex</string>
+			<key>label</key>
+			<string>Font Color (Hex): #</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.mpg13.undertime</string>
+			<key>key</key>
+			<string>customColor</string>
+			<key>label</key>
+			<string>Custom Color Enable</string>
+		</dict>
+		
 		<dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>
@@ -177,6 +221,14 @@
 			<string>PSButtonCell</string>
 			<key>label</key>
 			<string>Respring</string>
+		</dict>
+		<dict>
+			<key>height</key>
+			<string>30</string>
+			<key>cell</key>
+			<string>PSSpinnerCell</string>
+			<key>label</key>
+			<string>Thanks for using UnderTime!</string>
 		</dict>
 		<dict>
 			<key>cell</key>
