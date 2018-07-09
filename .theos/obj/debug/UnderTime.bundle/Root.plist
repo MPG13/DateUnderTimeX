@@ -16,13 +16,37 @@
 			<key>cell</key>
 			<string>PSSwitchCell</string>
 			<key>default</key>
-			<true/>
+			<false/>
 			<key>defaults</key>
-			<string>com.mpg13.undertime</string>
+			<string>com.mpg13.UnderTime</string>
 			<key>key</key>
 			<string>Enable</string>
 			<key>label</key>
 			<string>Enable tweak</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string></string>
+			<key>height</key>
+			<string>10</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSStaticTextCell</string>
+			<key>height</key>
+			<string>45</string>
+			<key>label</key>
+			<string>Edit all settings you want changed! Just because</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSStaticTextCell</string>
+			<key>height</key>
+			<string>45</string>
+			<key>label</key>
+			<string>they look configured doesn't mean they are!</string>
 		</dict>
 
 		<dict>
@@ -37,9 +61,9 @@
 			<key>cell</key>
 			<string>PSSwitchCell</string>
 			<key>default</key>
-			<true/>
+			<false/>
 			<key>defaults</key>
-			<string>com.mpg13.undertime</string>
+			<string>com.mpg13.UnderTime</string>
 			<key>key</key>
 			<string>lineOneEnable</string>
 			<key>label</key>
@@ -51,7 +75,7 @@
 			<key>default</key>
 			<false/>
 			<key>defaults</key>
-			<string>com.mpg13.undertime</string>
+			<string>com.mpg13.UnderTime</string>
 			<key>key</key>
 			<string>lineOneStandard</string>
 			<key>label</key>
@@ -61,15 +85,17 @@
 			<key>cell</key>
 			<string>PSEditTextCell</string>
 			<key>default</key>
-			<string>h:mm:ss</string>
+			<string></string>
 			<key>defaults</key>
-			<string>com.mpg13.undertime</string>
+			<string>com.mpg13.UnderTime</string>
 			<key>key</key>
 			<string>lineOne</string>
 			<key>label</key>
 			<string>Format:</string>
 			<key>noAutoCorrect</key>
-			<true/>
+			<false/>
+			<key>placeholder</key>
+			<string>Top line format</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -77,7 +103,7 @@
 			<key>default</key>
 			<false/>
 			<key>defaults</key>
-			<string>com.mpg13.undertime</string>
+			<string>com.mpg13.UnderTime</string>
 			<key>key</key>
 			<string>replaceTime</string>
 			<key>label</key>
@@ -98,7 +124,7 @@
 			<key>default</key>
 			<false/>
 			<key>defaults</key>
-			<string>com.mpg13.undertime</string>
+			<string>com.mpg13.UnderTime</string>
 			<key>key</key>
 			<string>lineTwoStandard</string>
 			<key>label</key>
@@ -108,13 +134,15 @@
 			<key>cell</key>
 			<string>PSEditTextCell</string>
 			<key>default</key>
-			<string>E d/M</string>
+			<string></string>
 			<key>defaults</key>
-			<string>com.mpg13.undertime</string>
+			<string>com.mpg13.UnderTime</string>
 			<key>label</key>
 			<string>Format:</string>
 			<key>key</key>
 			<string>lineTwo</string>
+			<key>placeholder</key>
+			<string>Bottom Line Format</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -141,9 +169,9 @@
 			<key>cell</key>
 			<string>PSSliderCell</string>
 			<key>default</key>
-			<integer>12</integer>
+			<integer>0</integer>
 			<key>defaults</key>
-			<string>com.mpg13.undertime</string>
+			<string>com.mpg13.UnderTime</string>
 			<key>key</key>
 			<string>sizeOfFont</string>
 			<key>max</key>
@@ -151,7 +179,7 @@
 			<key>min</key>
 			<real>6</real>
 			<key>showValue</key>
-			<true/>
+			<false/>
 		</dict>
 		
 		
@@ -167,9 +195,9 @@
 			<key>cell</key>
 			<string>PSSliderCell</string>
 			<key>default</key>
-			<integer>1</integer>
+			<integer>0</integer>
 			<key>defaults</key>
-			<string>com.mpg13.undertime</string>
+			<string>com.mpg13.UnderTime</string>
 			<key>key</key>
 			<string>fontAlpha</string>
 			<key>max</key>
@@ -177,27 +205,29 @@
 			<key>min</key>
 			<real>0</real>
 			<key>showValue</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>cell</key>
 			<string>PSEditTextCell</string>
 			<key>default</key>
-			<string>111111</string>
+			<string></string>
 			<key>defaults</key>
-			<string>com.mpg13.undertime</string>
+			<string>com.mpg13.UnderTime</string>
 			<key>key</key>
 			<string>fontHex</string>
 			<key>label</key>
 			<string>Font Color (Hex): #</string>
+			<key>placeholder</key>
+			<string>Color Code</string>
 		</dict>
 		<dict>
 			<key>cell</key>
 			<string>PSSwitchCell</string>
 			<key>default</key>
-			<true/>
+			<false/>
 			<key>defaults</key>
-			<string>com.mpg13.undertime</string>
+			<string>com.mpg13.UnderTime</string>
 			<key>key</key>
 			<string>customColor</string>
 			<key>label</key>

@@ -62,10 +62,12 @@ NSString *fontColor = GetPrefString(@"fontHex");
 
 NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 
+%group allHooks
+
 %hook _UIStatusBarStringView
 
 - (void)setText:(NSString *)text {
-	if(GetPrefBool(@"Enable") && ![text containsString:@"%"] && ![text containsString:@"1x"] && ![text containsString:@"LTE"] && ![text containsString:@"4G"] && ![text containsString:@"3G"] && ![text containsString:@"2G"] && ![text containsString:@"EDGE"]) {
+	if(GetPrefBool(@"Enable") && [text containsString:@":"]) {
 		NSString *timeLineOne = lineOne;
 		NSString *timeLineTwo = lineTwo;
 	
@@ -133,8 +135,6 @@ NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 %end
 
 
-
-
 %hook _UIStatusBarBackgroundActivityView
 
 - (void)setCenter:(CGPoint)point {
@@ -157,18 +157,15 @@ NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 
 %end
 
-%hook UIStatusBarBreadcrumbItemView
-
-- (id)applyUpdate:(id)arg1 toDisplayItem:(id)arg2 {
-	return nil;
-}
-
 %end
 
 %ctor {
 		dateFormatter = [[NSDateFormatter alloc] init];
-		dateFormatter.dateStyle = NSDateFormatterNoStyle;
-		dateFormatter.timeStyle = NSDateFormatterMediumStyle;
-		dateFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US"];
-		%init;
+	dateFormatter.dateStyle = NSDateFormatterNoStyle;
+	dateFormatter.timeStyle = NSDateFormatterMediumStyle;
+	dateFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US"];
+	
+	if (![@"com.saurik.Cydia" boolValue]) {
+		%init(allHooks);
+	}
 }
