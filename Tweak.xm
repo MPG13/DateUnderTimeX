@@ -56,18 +56,15 @@
 
 int sizeOfFont = GetPrefInt(@"sizeOfFont");
 int fontAlpha = GetPrefInt(@"fontAlpha");
-NSString *lineOne = GetPrefString(@"lineOne");
-NSString *lineTwo = GetPrefString(@"lineTwo");
 NSString *fontColor = GetPrefString(@"fontHex");
-
 NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-
-%group allHooks
 
 %hook _UIStatusBarStringView
 
 - (void)setText:(NSString *)text {
 	if(GetPrefBool(@"Enable") && [text containsString:@":"]) {
+		NSString *lineOne = GetPrefString(@"lineOne");
+		NSString *lineTwo = GetPrefString(@"lineTwo");
 		NSString *timeLineOne = lineOne;
 		NSString *timeLineTwo = lineTwo;
 	
@@ -113,15 +110,15 @@ NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 
 - (instancetype)init {
 	%orig;
-		if(GetPrefBool(@"Enable") && ((!GetPrefBool(@"lineTwoStandard") && [lineTwo containsString:@"s"]) || (!GetPrefBool(@"lineOneStandard") && [lineOne containsString:@"s"]))) {
+		if(GetPrefBool(@"Enable") && GetPrefBool(@"hasSeconds")) {
 			self.nz9_seconds_timer = [NSTimer scheduledTimerWithTimeInterval:1.0 repeats:YES block:^(NSTimer *timer) {
 				self.shortTimeView.text = @":";
 				self.pillTimeView.text = @":";
 				[self.shortTimeView setFont: [self.shortTimeView.font fontWithSize:sizeOfFont]];
 				[self.pillTimeView setFont: [self.pillTimeView.font fontWithSize:sizeOfFont]];
-		}];
-}
-	return self;
+			}];
+		}
+		return self;
 }
 
 - (id)applyUpdate:(id)arg1 toDisplayItem:(id)arg2 {
@@ -157,15 +154,9 @@ NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 
 %end
 
-%end
-
 %ctor {
-		dateFormatter = [[NSDateFormatter alloc] init];
+	dateFormatter = [[NSDateFormatter alloc] init];
 	dateFormatter.dateStyle = NSDateFormatterNoStyle;
 	dateFormatter.timeStyle = NSDateFormatterMediumStyle;
 	dateFormatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US"];
-	
-	if (![@"com.saurik.Cydia" boolValue]) {
-		%init(allHooks);
-	}
 }

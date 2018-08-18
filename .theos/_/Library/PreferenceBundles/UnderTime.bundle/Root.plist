@@ -26,6 +26,19 @@
 		</dict>
 		<dict>
 			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>com.mpg13.UnderTime</string>
+			<key>key</key>
+			<string>hasSeconds</string>
+			<key>label</key>
+			<string>Time has seconds in it</string>
+		</dict>
+		
+		<dict>
+			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
 			<string></string>
@@ -38,7 +51,7 @@
 			<key>height</key>
 			<string>45</string>
 			<key>label</key>
-			<string>Edit all settings you want changed! Just because</string>
+			<string>Edit all settings you want changed!</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -46,7 +59,31 @@
 			<key>height</key>
 			<string>45</string>
 			<key>label</key>
-			<string>they look configured doesn't mean they are!</string>
+			<string>Prefs don't always save right!</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSStaticTextCell</string>
+			<key>height</key>
+			<string>45</string>
+			<key>label</key>
+			<string>Go swipe back a page and re-open</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSStaticTextCell</string>
+			<key>height</key>
+			<string>45</string>
+			<key>label</key>
+			<string>UnderTime Settings to make sure</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSStaticTextCell</string>
+			<key>height</key>
+			<string>45</string>
+			<key>label</key>
+			<string>that your settings saved!</string>
 		</dict>
 
 		<dict>
